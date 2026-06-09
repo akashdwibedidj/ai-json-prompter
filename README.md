@@ -1,4 +1,4 @@
-# 🚀 Pipeline Runner
+# 🚀 AI JSON prompter
 
 An AI-powered application development pipeline that transforms a plain-English idea into a structured app design — complete with intent extraction, architecture generation, validation, and code generation. Supports multiple LLM providers via an OpenAI-compatible API interface, with a real-time streaming web UI.
 
