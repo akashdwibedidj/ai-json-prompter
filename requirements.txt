@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+sqlalchemy
+jsonschema
+google-genai
+python-dotenv
+jinja2
+python-multipart

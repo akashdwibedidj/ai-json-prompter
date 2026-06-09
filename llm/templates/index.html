@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipeline Runner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<!-- ── Window chrome ── -->
+<div id="shell">
+
+  <!-- Topbar -->
+  <header id="topbar">
+    <div class="wm-dots">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+    </div>
+    <span id="topbar-title">AI JSON prompter</span>
+    <div id="topbar-right">
+      <span id="topbar-provider">{{ provider }} / {{ model }}</span>
+      <button id="settings-btn" onclick="openSettings()" aria-label="Open model settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Model settings
+      </button>
+    </div>
+  </header>
+
+  <!-- JSON output panel -->
+  <section id="json-zone" aria-label="JSON output" hidden>
+    <div id="json-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleJson()">
+      <div class="json-header-left">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        final_output.json
+        <span id="json-size" class="json-meta"></span>
+      </div>
+      <div class="json-header-right">
+        <button class="dl-btn" onclick="downloadJson(event)">Download</button>
+        <span id="json-chevron" aria-hidden="true">▾</span>
+      </div>
+    </div>
+    <div id="json-body">
+      <pre id="json-pre"></pre>
+    </div>
+  </section>
+
+  <!-- Main 2-col -->
+  <main id="main">
+
+    <!-- Left: prompt column -->
+    <aside id="prompt-col" aria-label="Prompt input">
+      <div class="col-header">Prompt</div>
+
+      <div id="chat-scroll" aria-live="polite">
+        <div class="bubble bubble-sys" style="color: red; font-size: 14px;">Important read before starting the pipeline:</div>
+
+        <div class="bubble bubble-sys" style="color: lightblue; font-size: 14px;">Please first define your api key in the top ribbon then start the pipeline. Please ignore if already defined.</div>
+      
+      <div class="bubble bubble-sys" style="color: lightblue; font-size: 14px;">I used the Ollama provider with the mistral model. so i did not run out of tokens if tokens are less the model will break halfway.</div>
+      
+      <div class="bubble bubble-sys" style="color: lightblue; font-size: 14px;">Please ensure your API key is correctly configured in the settings.</div>
+      
+      <div class="bubble bubble-sys" style="color: lightblue; font-size: 14px;">If this does not work you can see my video or download code from git hub follow instructions and run it in your local environment.</div>
+      
+      <div class="bubble bubble-sys" style="color: lightblue; font-size: 14px;">For the json repairing : the json repairing works but sometimes it when it repaires it creates more errors(logical errors not syntax errors) from that repairing i think it may be an ai problem since no mater what AI always finds problem in no problem so if that happens you may ignore that.</div>
+      </div>
+
+
+      <div id="input-wrap">
+        <textarea
+          id="user-textarea"
+          placeholder="e.g. build a task manager with auth, teams, real-time notifications…"
+          aria-label="Describe your app"
+        ></textarea>
+        <button id="run-btn" onclick="runPipeline()">
+          <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="run-btn-label">Run pipeline</span>
+        </button>
+        <p class="hint">Ctrl+Enter to run</p>
+      </div>
+    </aside>
+
+    <!-- Right: terminal column -->
+    <div id="terminal-col">
+      <div id="terminal-head">
+        <div id="status-row">
+          <div id="spinner" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+          <span id="status-text">idle</span>
+          <span id="elapsed" aria-live="polite"></span>
+        </div>
+        <div id="stage-indicator"></div>
+      </div>
+
+      <div id="terminal-scroll" aria-live="polite" aria-label="Terminal output">
+        <div id="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <p>pipeline output will stream here</p>
+        </div>
+      </div>
+
+      <div id="conn-error" role="alert" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="conn-error-msg"></span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── Settings modal ── -->
+<div id="settings-overlay" onclick="closeSettings()" hidden></div>
+<div id="settings-modal" role="dialog" aria-modal="true" aria-label="Model settings" hidden>
+  <div class="modal-header">
+    <h2>Model settings</h2>
+    <button class="modal-close" onclick="closeSettings()" aria-label="Close">✕</button>
+  </div>
+
+  <div class="modal-body">
+    <label class="field-label" for="provider-select">Provider</label>
+    <select id="provider-select" onchange="onProviderChange()">
+      <option value="ollama">Ollama (local)</option>
+      <option value="openai">OpenAI</option>
+      <option value="gemini">Google Gemini</option>
+      <option value="claude">Anthropic Claude</option>
+      <option value="openrouter">OpenRouter</option>
+    </select>
+
+    <label class="field-label" for="model-input">Model name</label>
+    <input id="model-input" type="text" placeholder="e.g. mistral, gpt-4o, gemini-1.5-pro" />
+
+    <label class="field-label" for="base-url-input">Base URL</label>
+    <input id="base-url-input" type="text" placeholder="https://api.openai.com/v1" />
+
+    <label class="field-label" for="apikey-input">
+      API Key
+      <span class="field-sub">(not required for Ollama)</span>
+    </label>
+    <div class="apikey-wrap">
+      <input id="apikey-input" type="password" placeholder="sk-…" autocomplete="off" />
+      <button class="eye-btn" onclick="toggleApiKeyVisibility()" aria-label="Toggle visibility">
+        <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="save-status" class="save-status" hidden></div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+    <button class="btn-primary" onclick="saveSettings()">Save &amp; apply</button>
+  </div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
