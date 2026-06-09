@@ -135,6 +135,11 @@ After all three generation stages complete, a dedicated **validation** step insp
 Finally, `codegen.py` consumes `final_output.json` to generate the actual application files.
 
 ---
+## Architecture Diagram
+
+<p align="center">
+  <img src="./ai_json_prompter_flow.svg" alt="Architecture Diagram" width="900">
+</p>
 
 ## ⚙️ Setup
 
